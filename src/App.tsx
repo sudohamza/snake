@@ -137,20 +137,27 @@ function App() {
   return (
     <>
       <div className="main">
-        <div className="arena">
-          {snake.map((dot, index) => {
-            return (
-              <div
-                key={index}
-                style={{ top: dot.top, left: dot.left }}
-                className="snake"
-              ></div>
-            );
-          })}
-          <div
-            className="food"
-            style={{ top: food.top, left: food.left }}
-          ></div>
+        <div>
+          <div style={{ textAlign: "center" }}>
+            <h1>
+              Press <span style={{ color: "green" }}>Space</span> for Play/Pause
+            </h1>
+          </div>
+          <div className="arena">
+            {snake.map((dot, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{ top: dot.top, left: dot.left }}
+                  className="snake"
+                ></div>
+              );
+            })}
+            <div
+              className="food"
+              style={{ top: food.top, left: food.left }}
+            ></div>
+          </div>
         </div>
       </div>
     </>
