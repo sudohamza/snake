@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 type directionType = "up" | "down" | "left" | "right" | "none";
-let direction: directionType = "down";
+let direction: directionType = "none";
 let food = { top: 0, left: 0 };
 
 const genRandomFood = (min: number, max: number) => {
@@ -29,6 +29,7 @@ function App() {
   const [snake, setSnake] = useState<Array<snakeStruct>>([
     { top: 240, left: 240 },
   ]);
+  const [lastState, setLastState] = useState<directionType>("none");
   const move = () => {
     switch (direction) {
       case "up":
@@ -43,6 +44,8 @@ function App() {
             currentSnake.pop();
           }
           setSnake(currentSnake);
+        } else {
+          window.location.reload();
         }
         break;
       case "down":
@@ -57,6 +60,8 @@ function App() {
             currentSnake.pop();
           }
           setSnake(currentSnake);
+        } else {
+          window.location.reload();
         }
         break;
       case "left":
@@ -71,6 +76,8 @@ function App() {
             currentSnake.pop();
           }
           setSnake(currentSnake);
+        } else {
+          window.location.reload();
         }
         break;
       case "right":
@@ -85,6 +92,8 @@ function App() {
             currentSnake.pop();
           }
           setSnake(currentSnake);
+        } else {
+          window.location.reload();
         }
         break;
       case "none":
@@ -96,13 +105,22 @@ function App() {
   };
 
   const checkKey = (event: any) => {
-    console.log(event);
+    let key = event.key;
+    key.toString();
+    if (direction === "none" && key.includes("Arrow")) {
+      if (lastState === "none") {
+        direction = "down";
+      } else {
+        direction = lastState;
+      }
+      return;
+    }
+
     switch (event.key) {
       case "ArrowLeft":
         if (direction !== "right") {
           direction = "left";
         }
-
         break;
       case "ArrowRight":
         if (direction !== "left") direction = "right";
@@ -113,15 +131,32 @@ function App() {
       case "ArrowDown":
         if (direction !== "up") direction = "down";
         break;
+      case "Escape":
+        if (direction !== "none") {
+          setLastState(direction);
+          direction = "none";
+        } else {
+        }
+        break;
       default:
         break;
     }
   };
   window.addEventListener("keydown", checkKey);
-  let arr = ["a", "b", "c", "d"];
-  console.log(arr[arr.length - 1]);
   useEffect(() => {
     setTimeout(() => {
+      // if (snake[0].top === food.top && snake[0].left === food.left) {
+      //   genRandomFood(1, 500);
+      //   let thisSnake = snake.slice();
+      //   let newDot = { ...thisSnake[thisSnake.length - 1] };
+      //   thisSnake.push(newDot);
+      //   setSnake(thisSnake);
+      // }
+    }, 50);
+  }, [snake, direction]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
       move();
       if (snake[0].top === food.top && snake[0].left === food.left) {
         genRandomFood(1, 500);
@@ -130,25 +165,53 @@ function App() {
         thisSnake.push(newDot);
         setSnake(thisSnake);
       }
-    }, 150);
-  }, [snake, direction]);
+    }, 200);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  });
+
   let a = 5;
   a -= 2;
   return (
     <>
       <div className="main">
         <div>
-          <div style={{ textAlign: "center" }}>
-            <h1>
-              Press <span style={{ color: "green" }}>Space</span> for Play/Pause
-            </h1>
+          <div
+            style={{
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <h1>Press </h1>
+            <div
+              style={{
+                padding: 10,
+                margin: 20,
+                border: "4px solid gray",
+                borderRadius: 10,
+                backgroundColor: "white",
+                fontSize: "40px",
+                fontWeight: "bold",
+              }}
+            >
+              Esc
+            </div>
+            <h1>for Pause.</h1>
           </div>
           <div className="arena">
             {snake.map((dot, index) => {
               return (
                 <div
                   key={index}
-                  style={{ top: dot.top, left: dot.left }}
+                  style={{
+                    top: dot.top,
+                    left: dot.left,
+                    border: "2px solid white",
+                  }}
                   className="snake"
                 ></div>
               );
