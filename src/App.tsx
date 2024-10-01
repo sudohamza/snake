@@ -19,7 +19,6 @@ const genRandomFood = (min: number, max: number) => {
     left,
   };
 };
-genRandomFood(1, 500);
 function App() {
   type snakeStruct = {
     top: number;
@@ -29,7 +28,6 @@ function App() {
   const [snake, setSnake] = useState<Array<snakeStruct>>([
     { top: 240, left: 240 },
   ]);
-  const [lastState, setLastState] = useState<directionType>("none");
   const move = () => {
     switch (direction) {
       case "up":
@@ -45,6 +43,10 @@ function App() {
           }
           setSnake(currentSnake);
         } else {
+          let score = Number(localStorage.getItem("High Score"));
+          if (snake.length - 1 > score) {
+            localStorage.setItem("High Score", String(snake.length - 1));
+          }
           window.location.reload();
         }
         break;
@@ -61,6 +63,10 @@ function App() {
           }
           setSnake(currentSnake);
         } else {
+          let score = Number(localStorage.getItem("High Score"));
+          if (snake.length - 1 > score) {
+            localStorage.setItem("High Score", String(snake.length - 1));
+          }
           window.location.reload();
         }
         break;
@@ -77,6 +83,10 @@ function App() {
           }
           setSnake(currentSnake);
         } else {
+          let score = Number(localStorage.getItem("High Score"));
+          if (snake.length - 1 > score) {
+            localStorage.setItem("High Score", String(snake.length - 1));
+          }
           window.location.reload();
         }
         break;
@@ -93,11 +103,14 @@ function App() {
           }
           setSnake(currentSnake);
         } else {
+          let score = Number(localStorage.getItem("High Score"));
+          if (snake.length - 1 > score) {
+            localStorage.setItem("High Score", String(snake.length - 1));
+          }
           window.location.reload();
         }
         break;
       case "none":
-        console.log("none");
         break;
       default:
         break;
@@ -105,17 +118,6 @@ function App() {
   };
 
   const checkKey = (event: any) => {
-    let key = event.key;
-    key.toString();
-    if (direction === "none" && key.includes("Arrow")) {
-      if (lastState === "none") {
-        direction = "down";
-      } else {
-        direction = lastState;
-      }
-      return;
-    }
-
     switch (event.key) {
       case "ArrowLeft":
         if (direction !== "right") {
@@ -132,28 +134,11 @@ function App() {
         if (direction !== "up") direction = "down";
         break;
       case "Escape":
-        if (direction !== "none") {
-          setLastState(direction);
-          direction = "none";
-        } else {
-        }
         break;
       default:
         break;
     }
   };
-  window.addEventListener("keydown", checkKey);
-  useEffect(() => {
-    setTimeout(() => {
-      // if (snake[0].top === food.top && snake[0].left === food.left) {
-      //   genRandomFood(1, 500);
-      //   let thisSnake = snake.slice();
-      //   let newDot = { ...thisSnake[thisSnake.length - 1] };
-      //   thisSnake.push(newDot);
-      //   setSnake(thisSnake);
-      // }
-    }, 50);
-  }, [snake, direction]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -165,18 +150,24 @@ function App() {
         thisSnake.push(newDot);
         setSnake(thisSnake);
       }
-    }, 200);
+    }, 100);
 
     return () => {
       clearInterval(intervalId);
     };
   });
 
-  let a = 5;
-  a -= 2;
+  useEffect(() => {
+    window.addEventListener("keydown", checkKey);
+
+    return () => {
+      window.removeEventListener("keydown", checkKey);
+    };
+  }, []);
+
   return (
     <>
-      <div className="main">
+      <div className="main" onKeyDownCapture={checkKey}>
         <div>
           <div
             style={{
@@ -186,7 +177,7 @@ function App() {
               alignItems: "center",
             }}
           >
-            <h1>Press </h1>
+            <h1>High Score </h1>
             <div
               style={{
                 padding: 10,
@@ -198,9 +189,24 @@ function App() {
                 fontWeight: "bold",
               }}
             >
-              Esc
+              {localStorage.getItem("High Score") || 0}
             </div>
-            <h1>for Pause.</h1>
+            <h1>Your Score</h1>
+            <div
+              style={{
+                padding: 10,
+                margin: 20,
+                paddingLeft: 20,
+                paddingRight: 20,
+                border: "4px solid gray",
+                borderRadius: 10,
+                backgroundColor: "white",
+                fontSize: "40px",
+                fontWeight: "bold",
+              }}
+            >
+              {snake.length - 1}
+            </div>
           </div>
           <div className="arena">
             {snake.map((dot, index) => {
