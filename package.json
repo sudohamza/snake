@@ -1,7 +1,6 @@
 {
   "name": "snake",
   "private": true,
-  "homepage": "https://sudohamza.github.io/snake",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
